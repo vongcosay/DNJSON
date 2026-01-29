@@ -110,7 +110,14 @@
             <span>DÁN DỮ LIỆU BẢNG TẠI ĐÂY</span>
             <span id="count">0 dòng</span>
         </div>
-        <textarea id="userInput" oninput="countRows()" placeholder="Copy từ Sheets và dán vào đây..."></textarea>
+        <textarea id="userInput" oninput="countRows()" placeholder="Copy từ Sheets và dán vào đây...">DATE	COUNTA of ID	K UV	K 745
+02/01/2025	339	173	621
+03/01/2025	236	93	570
+04/01/2025	86	75	161
+06/01/2025	153	87	416
+07/01/2025	187	37	437
+08/01/2025	177	32	440
+09/01/2025	206	65	550</textarea>
     </div>
 
     <div class="btn-group">
@@ -138,6 +145,12 @@
 
 <script>
     let resData = "", resExt = "";
+
+    // Chạy khi trang vừa load để cập nhật dữ liệu mẫu
+    window.onload = function() {
+        countRows();
+        convert('json'); // Tự động convert mẫu sang JSON để người dùng dễ hình dung
+    };
 
     function countRows() {
         const val = document.getElementById('userInput').value.trim();
@@ -186,7 +199,6 @@
         document.getElementById('codeRes').textContent = resData;
         document.getElementById('btnDl').innerText = "📥 Tải ." + type.toUpperCase();
         document.getElementById('outputArea').style.display = 'block';
-        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
     }
 
     function dl() {
