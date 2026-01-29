@@ -193,7 +193,7 @@
         const b = new Blob([resData], {type: 'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(b);
-        a.download = `donguyen_data_${Date.now()}.${resExt}`;
+        a.download = `DN JSON_Data_${Date.now()}.${resExt}`;
         a.click();
     }
 
