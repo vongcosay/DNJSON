@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>DN JSON & HTML Online - Chuyển Google Sheets sang JSON & HTML Table</title>
+    <meta name="description" content="Công cụ trực tuyến miễn phí của Do Nguyen giúp tạo file JSON và mã HTML từ dữ liệu Google Sheets hoặc Excel. An toàn, nhanh chóng và bảo mật 100%.">
+    <meta name="keywords" content="tạo json online, chuyển sheets sang json, convert excel to html, tạo bảng html online, Do Nguyen Tool">
+    <meta name="author" content="Do Nguyen">
+    
+    <meta property="og:title" content="DN JSON & HTML Online - Công cụ chuyển đổi dữ liệu cực nhanh">
+    <meta property="og:description" content="Dán dữ liệu Sheets - Nhận ngay file JSON hoặc HTML.">
+    <meta property="og:type" content="website">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00b894;
+            --accent: #0984e3;
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --border: #e2e8f0;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main);
+            margin: 0; padding: 20px; display: flex; justify-content: center;
+        }
+
+        .container { 
+            width: 100%; max-width: 900px; background: var(--card);
+            padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            margin-top: 20px;
+        }
+
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { margin: 0; color: var(--primary); font-size: 2rem; font-weight: 800; }
+        .tagline { color: var(--text-sub); font-size: 1rem; margin-top: 5px; }
+
+        .editor-box {
+            border: 2px solid var(--border); border-radius: 16px;
+            overflow: hidden; background: #fff; transition: 0.3s;
+        }
+
+        .editor-box:focus-within { border-color: var(--primary); }
+
+        .sticky-header {
+            background: #f8fafc; padding: 12px 20px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; font-weight: 600; font-size: 0.85rem;
+            color: var(--text-sub); position: sticky; top: 0; z-index: 5;
+        }
+
+        textarea {
+            width: 100%; height: 280px; padding: 20px; border: none; outline: none;
+            font-family: 'Consolas', monospace; font-size: 14px; line-height: 1.6;
+            box-sizing: border-box; resize: vertical;
+        }
+
+        .btn-group {
+            margin: 25px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
+        }
+
+        button {
+            padding: 14px; border: none; border-radius: 12px; font-weight: 700;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .btn-json { background: var(--primary); color: white; }
+        .btn-html { background: var(--accent); color: white; }
+        .btn-clear { background: #f1f2f6; color: #ff4757; }
+
+        button:hover { transform: translateY(-2px); filter: brightness(1.05); }
+
+        .result-box {
+            margin-top: 30px; display: none; background: #fdfdfd; padding: 20px;
+            border-radius: 16px; border: 1px solid var(--border); animation: fadeInUp 0.5s;
+        }
+
+        @keyframes fadeInUp { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+
+        .res-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        
+        pre {
+            background: #2d3436; color: #fff; padding: 20px; border-radius: 12px;
+            overflow-x: auto; max-height: 400px; font-size: 13px;
+        }
+
+        footer {
+            margin-top: 40px; text-align: center; border-top: 1px solid var(--border);
+            padding-top: 20px; color: var(--text-sub); font-size: 0.85rem;
+        }
+        .author-link { color: var(--primary); text-decoration: none; font-weight: 700; }
+        #count { background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<main class="container">
+    <header>
+        <h1>DN JSON & HTML Online</h1>
+        <p class="tagline">Chuyển đổi dữ liệu Google Sheets & Excel nhanh chóng</p>
+    </header>
+
+    <div class="editor-box">
+        <div class="sticky-header">
+            <span>DÁN DỮ LIỆU BẢNG TẠI ĐÂY</span>
+            <span id="count">0 dòng</span>
+        </div>
+        <textarea id="userInput" oninput="countRows()" placeholder="Copy từ Sheets và dán vào đây..."></textarea>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-json" onclick="convert('json')">📦 Xuất JSON</button>
+        <button class="btn-html" onclick="convert('html')">🌐 Xuất HTML</button>
+        <button class="btn-clear" onclick="reset()">🧹 Xóa hết</button>
+    </div>
+
+    <div id="outputArea" class="result-box">
+        <div class="res-head">
+            <h3 id="resTitle" style="margin:0; font-size: 1rem;">Kết quả:</h3>
+            <div style="display:flex; gap:8px;">
+                <button onclick="copy()" style="background:#dfe6e9; color:#2d3436; padding:8px 12px; font-size:0.8rem;">📋 Copy</button>
+                <button onclick="dl()" id="btnDl" style="background:#2d3436; color:white; padding:8px 12px; font-size:0.8rem;">📥 Tải về</button>
+            </div>
+        </div>
+        <pre id="codeRes"></pre>
+    </div>
+
+    <footer>
+        Công cụ tạo file JSON & HTML được phát triển bởi <a href="#" class="author-link">Do Nguyen</a> &copy; 2026
+        <br><small>Xử lý an toàn trên trình duyệt - Không lưu trữ dữ liệu người dùng.</small>
+    </footer>
+</main>
+
+<script>
+    let resData = "", resExt = "";
+
+    function countRows() {
+        const val = document.getElementById('userInput').value.trim();
+        document.getElementById('count').innerText = (val ? val.split('\n').length : 0) + " dòng";
+    }
+
+    function reset() {
+        if(confirm("Xóa toàn bộ dữ liệu?")) {
+            document.getElementById('userInput').value = "";
+            document.getElementById('outputArea').style.display = 'none';
+            countRows();
+        }
+    }
+
+    function convert(type) {
+        const input = document.getElementById('userInput').value.trim();
+        if(!input) return alert("Vui lòng dán dữ liệu!");
+
+        const lines = input.split('\n').map(l => l.split('\t'));
+        const heads = lines[0].map(h => h.trim());
+        const rows = lines.slice(1);
+        resExt = type;
+
+        if(type === 'json') {
+            const arr = rows.map(r => {
+                let obj = {};
+                heads.forEach((h, i) => obj[h] = r[i] ? r[i].trim() : "");
+                return obj;
+            });
+            resData = JSON.stringify(arr, null, 4);
+            document.getElementById('resTitle').innerText = "Cấu trúc JSON:";
+        } else {
+            let h = "<table class='dn-table'>\n <thead>\n  <tr>\n";
+            heads.forEach(th => h += `   <th>${th}</th>\n`);
+            h += "  </tr>\n </thead>\n <tbody>\n";
+            rows.forEach(r => {
+                h += "  <tr>\n";
+                r.forEach(td => h += `   <td>${td.trim()}</td>\n`);
+                h += "  </tr>\n";
+            });
+            h += " </tbody>\n</table>";
+            resData = h;
+            document.getElementById('resTitle').innerText = "Mã Table HTML:";
+        }
+
+        document.getElementById('codeRes').textContent = resData;
+        document.getElementById('btnDl').innerText = "📥 Tải ." + type.toUpperCase();
+        document.getElementById('outputArea').style.display = 'block';
+        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+    }
+
+    function dl() {
+        const b = new Blob([resData], {type: 'text/plain'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = `donguyen_data_${Date.now()}.${resExt}`;
+        a.click();
+    }
+
+    function copy() {
+        navigator.clipboard.writeText(resData);
+        alert("Đã sao chép!");
+    }
+</script>
+</body>
+</html>
